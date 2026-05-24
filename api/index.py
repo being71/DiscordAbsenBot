@@ -138,11 +138,19 @@ def interactions():
                 break
                 
         target_group = action
+
+        # ======================================================================
+        # FIX: AUTO-ROUTING (Jika klik Waitlist tapi Mainball kosong/belum penuh)
+        # ======================================================================
+        if target_group == "waitlist" and len(doc_data.get("mainball", [])) < mainball_cap:
+            target_group = "mainball"
+        # ======================================================================
         
         # Logika KELUAR (Klik tombol yang sama)
         if current_group == target_group:
             doc_data[current_group].remove(user_id)
-            # FIX: Auto-promotion dari Waitlist HANYA boleh masuk ke Mainball!
+            
+            # Auto-promotion dari Waitlist HANYA boleh masuk ke Mainball!
             if current_group == "mainball" and doc_data.get("waitlist"):
                 promoted_id = doc_data["waitlist"].pop(0)
                 doc_data["mainball"].append(promoted_id)
@@ -161,7 +169,7 @@ def interactions():
             if current_group:
                 doc_data[current_group].remove(user_id)
                 
-                # FIX: Auto-promotion dari Waitlist HANYA aktif jika grup yang ditinggalkan adalah Mainball
+                # Auto-promotion dari Waitlist HANYA aktif jika grup yang ditinggalkan adalah Mainball
                 if current_group == "mainball" and doc_data.get("waitlist"):
                     promoted_id = doc_data["waitlist"].pop(0)
                     doc_data["mainball"].append(promoted_id)
