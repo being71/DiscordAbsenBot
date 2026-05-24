@@ -142,10 +142,10 @@ def interactions():
         # Logika KELUAR (Klik tombol yang sama)
         if current_group == target_group:
             doc_data[current_group].remove(user_id)
-            # Auto-promotion dari Waitlist ke grup utama yang ditinggalkan
-            if current_group in ["mainball", "defense"] and doc_data.get("waitlist"):
+            # FIX: Auto-promotion dari Waitlist HANYA boleh masuk ke Mainball!
+            if current_group == "mainball" and doc_data.get("waitlist"):
                 promoted_id = doc_data["waitlist"].pop(0)
-                doc_data[current_group].append(promoted_id)
+                doc_data["mainball"].append(promoted_id)
         
         # Logika MASUK / PINDAH GRUP
         else:
@@ -160,9 +160,11 @@ def interactions():
             # Hapus dari grup lama jika ada
             if current_group:
                 doc_data[current_group].remove(user_id)
-                if current_group in ["mainball", "defense"] and doc_data.get("waitlist"):
+                
+                # FIX: Auto-promotion dari Waitlist HANYA aktif jika grup yang ditinggalkan adalah Mainball
+                if current_group == "mainball" and doc_data.get("waitlist"):
                     promoted_id = doc_data["waitlist"].pop(0)
-                    doc_data[current_group].append(promoted_id)
+                    doc_data["mainball"].append(promoted_id)
             
             # Masukkan ke grup baru
             if target_group not in doc_data: doc_data[target_group] = []
